@@ -1,0 +1,561 @@
+\def\notes{1}
+\documentclass[11pt]{article}
+%\usepackage[T1]{fontenc}
+%\usepackage[letterpaper]{geometry}
+%\geometry{verbose,tmargin=3cm,bmargin=3cm,lmargin=3cm,rmargin=3cm}
+%\usepackage{verbatim}
+\usepackage{amsfonts,amsmath,amssymb,amsthm}
+%\usepackage{setspace}
+\usepackage{xspace}%,enumitem}
+%\usepackage{times}
+\usepackage{fullpage}
+%\usepackage{hyperref}
+%\doublespacing
+\usepackage{color}
+\usepackage{mathrsfs}
+
+%\usepackage{numdef}
+%\usepackage{enumitem}
+\usepackage{amsopn}
+\usepackage{url,hyperref}  
+\providecommand{\sqbinom}{\genfrac{\lbrack}{\rbrack}{0pt}{}}
+\DeclareMathOperator{\spn}{span}
+
+\newif\ifdraft
+%\drafttrue
+\drafttrue
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+\numberwithin{equation}{section} %% Comment out for sequentially-numbered
+\numberwithin{figure}{section} %% Comment out for sequentially-numbered
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{conjecture}[thm]{Conjecture}
+\newtheorem{definition}[thm]{Definition}
+\newtheorem{dfn}[thm]{Definition}
+\newtheorem{lemma}[thm]{Lemma}
+\newtheorem{remark}[thm]{Remark}
+\newtheorem{proposition}[thm]{Proposition}
+\newtheorem{corollary}[thm]{Corollary}
+\newtheorem{claim}[thm]{Claim}
+\newtheorem{fact}[thm]{Fact}
+\newtheorem{openprob}[thm]{Open Problem}
+\newtheorem{remk}[thm]{Remark}
+\newtheorem{example}[thm]{Example}
+\newtheorem{apdxlemma}{Lemma}
+\newcommand{\question}[1]{{\sf [#1]\marginpar{?}} }
+%\usepackage{babel}
+\usepackage{tikz}
+
+\makeatletter
+\newcommand*{\circled}{\@ifstar\circledstar\circlednostar}
+\makeatother
+
+\newcommand*\circledstar[1]{%
+  \tikz[baseline=(C.base)]
+    \node[%
+      fill,
+      circle,
+      minimum size=1.35em,
+      text=white,
+      font=\sffamily,
+      inner sep=0.5pt
+    ](C) {#1};%
+}
+\newcommand*\circlednostar[1]{%
+  \tikz[baseline=(C.base)]
+    \node[%
+      draw,
+      circle,
+      minimum size=1.35em,
+      font=\sffamily,
+      inner sep=0.5pt
+    ](C) {#1};%
+}
+
+\providecommand{\bd}[1]{\circled{#1}}
+
+
+%Eli's macros
+\newcommand{\E}{{\mathbb{E}}}
+%\newcommand{\N}{{\mathbb{N}}}
+\newcommand{\R}{{\mathbb{R}}}
+\newcommand{\calF}{{\cal{F}}}
+\newcommand{\inp}{\ensuremath{\mathsf{inp}}\xspace}
+\newcommand{\inps}{\ensuremath{\overrightarrow{\mathsf{inp}}}\xspace}
+\newcommand{\outs}{\ensuremath{\overrightarrow{\mathsf{out}}}\xspace}
+\newcommand{\out}{\ensuremath{\mathsf{out}}\xspace}
+\newcommand{\disp}[1]{D_{#1}}
+%\newcommand{\spn}[1]{{\rm{span}}\left(#1\right)}
+%\newcommand{\supp}{{\rm{supp}}}
+\newcommand{\agree}{{\sf{agree}}}
+\newcommand{\RS}{{\sf{RS}}}
+\newcommand{\aRS}{{\sf{aRS}}}
+\newcommand{\rrs}{R_{\aRS}}
+\newcommand{\VRS}{V_\RS}
+\newcommand{\set}[1]{\ensuremath{\left\{#1\right\}}\xspace}
+\newcommand{\angles}[1]{\langle{#1}\rangle}
+\newcommand{\condset}[2]{\set{#1 \mid #2 }}
+\newcommand{\zo}{\set{0,1}}
+\newcommand{\zon}{{\zo^n}}
+\newcommand{\zom}{{\zo^m}}
+\newcommand{\zok}{{\zo^}}
+\newcommand{\eps}{\ensuremath{\epsilon}\xspace}
+\newcommand{\e}{\eps}
+%\newcommand{\d}{\delta}
+\newcommand{\poly}{\ensuremath{\mathrm{poly}(\lambda)}\xspace}
+\newcommand{\itone}{{\it{(i)}}\xspace}
+\newcommand{\ittwo}{{\it{(ii)}}\xspace}
+\newcommand{\itthree}{{\it{(iii)}}\xspace}
+\newcommand{\itfour}{{\it{(iv)}}\xspace}
+\newcommand{\cc}{{\rm{CC}}}
+\newcommand{\rnk}{{\rm{rank}}}
+\newcommand{\T}{T}
+\newcommand{\I}{{\mathbb{I}}}
+\ifdraft
+\newcommand{\ariel}[1]{{\color{blue}{\textit{#1 --- ariel gabizon}}}}
+\else
+\newcommand{\ariel}[1]{}
+\fi
+\providecommand{\improvement}[1]{{\color{red} \textbf{#1}}}
+
+\newcommand{\ate}[2]{\ensuremath{\mathsf{Ate_{opt}}(#1,#2)}\xspace}
+\title{%
+On the privacy of Zcash Joinsplits with a Witness Indistinguishable SNARK}
+\author{Ariel Gabizon}
+\date{Zcash}
+\begin{document}
+\maketitle
+ \mathchardef\mhyphen="2D
+
+%\num\newcommand{\G1}{\ensuremath{{\mathbb G}_1}\xspace}
+%\num\newcommand{\G2}{\ensuremath{{\mathbb G}_2}\xspace}
+%\num\newcommand{\G11}{\ensuremath{\G1\setminus \set{0} }\xspace}
+%\num\newcommand{\G21}{\ensuremath{\G2\setminus \set{0} }\xspace}
+\newcommand{\grouppair}{\ensuremath{G^*}\xspace}
+
+\newcommand{\Gt}{\ensuremath{{\mathbb G}_t}\xspace}
+\newcommand{\F}{\ensuremath{{\mathbb F}_r}\xspace}
+\newcommand{\help}[1]{$#1$-helper\xspace}
+\newcommand{\randompair}[1]{\ensuremath{\mathsf{randomPair}(#1)}\xspace}
+\newcommand{\pair}[1]{$#1$-pair\xspace}
+\newcommand{\pairs}[1]{$#1$-pairs\xspace}
+\newcommand{\pubvalsOf}[1]{\ensuremath{\mathrm{pub}(#1)}\xspace}
+\newcommand{\pairone}[1]{\G1-$#1$-pair\xspace}
+\newcommand{\pairtwo}[1]{\G2-$#1$-pair\xspace}
+\newcommand{\sameratio}[2]{\ensuremath{\mathsf{SameRatio}(#1,#2)}\xspace}
+\newcommand{\vecc}[2]{\ensuremath{(#1)_{#2}}\xspace}
+\newcommand{\players}{\ensuremath{[n]}\xspace}
+\newcommand{\ci}{\ensuremath{\mathrm{CI}}\xspace}
+\newcommand{\pairvec}[1]{$#1$-vector\xspace}
+\newcommand{\Fq}{\ensuremath{\mathbb{F}_q}\xspace}
+\newcommand{\sigscheme}{\ensuremath{\mathscr S}\xspace}
+
+\newcommand{\randpair}[1]{\ensuremath{\mathsf{rp}_{#1}}\xspace}
+\newcommand{\randpairone}[1]{\ensuremath{\mathsf{rp}_{#1}^{1}}\xspace}
+
+\newcommand{\randpairtwo}[1]{\ensuremath{\mathsf{rp_{#1}^2}}\xspace}%the randpair in G2
+
+\newcommand{\pos}{\ensuremath{\mathsf{pos}}\xspace}
+\newcommand{\rej}{\ensuremath{\mathsf{rej}}\xspace}
+\newcommand{\acc}{\ensuremath{\mathsf{acc}}\xspace}
+\newcommand{\sha}[1]{\ensuremath{\mathsf{COMMIT}(#1)}\xspace}
+ \newcommand{\shaa}{\ensuremath{\mathsf{COMMIT}}\xspace}
+ \newcommand{\comm}[1]{\ensuremath{\mathsf{comm}_{#1}}\xspace}
+ \newcommand{\defeq}{:=}
+
+\newcommand{\A}{\ensuremath{\vec{A}}\xspace}
+\newcommand{\B}{\ensuremath{\vec{B}}\xspace}
+\newcommand{\C}{\ensuremath{\vec{C}}\xspace}
+\newcommand{\Btwo}{\ensuremath{\vec{B_2}}\xspace}
+\newcommand{\treevecsimp}{\ensuremath{(\tau,\rho_A,\rho_A \rho_B,\rho_A\alpha_A,\rho_A\rho_B\alpha_B, \rho_A\rho_B\alpha_C,\beta,\beta\gamma)}\xspace}% The sets of elements used in simplifed relation tree in main text body
+\newcommand{\rcptc}{random-coefficient subprotocol\xspace}
+\newcommand{\rcptcparams}[2]{\ensuremath{\mathrm{RCPC}(#1,#2)}\xspace}
+\newcommand{\verifyrcptcparams}[2]{\ensuremath{\mathrm{\mathsf{verify}RCPC}(#1,#2)}\xspace}
+
+% \num\newcommand{\ex1}[1]{\ensuremath{ #1\cdot g_1}\xspace}
+% \num\newcommand{\ex2}[1]{\ensuremath{#1\cdot g_2}\xspace}
+ \newcommand{\pr}{\mathrm{Pr}}
+ \newcommand{\powervec}[2]{\ensuremath{(1,#1,#1^{2},\ldots,#1^{#2})}\xspace}
+%\num\newcommand{\out1}[1]{\ensuremath{\ex1{\powervec{#1}{d}}}\xspace}
+%\num\newcommand{\out2}[1]{\ensuremath{\ex2{\powervec{#1}{d}}}\xspace}
+ \newcommand{\nizk}[2]{\ensuremath{\mathrm{NIZK}(#1,#2)}\xspace}% #2 is the hash concatenation input
+ \newcommand{\verifynizk}[3]{\ensuremath{\mathrm{VERIFY\mhyphen NIZK}(#1,#2,#3)}\xspace}
+\newcommand{\protver}{protocol verifier\xspace} 
+\newcommand{\mulgroup}{\ensuremath{\F^*}\xspace}
+\newcommand{\lag}[1]{\ensuremath{L_{#1}}\xspace} 
+\newcommand{\sett}[2]{\ensuremath{\set{#1}_{#2}}\xspace}
+\newcommand{\omegaprod}{\ensuremath{\alpha_{\omega}}\xspace}
+\newcommand{\lagvec}[1]{\ensuremath{\mathrm{LAG}_{#1}}\xspace}
+\newcommand{\Z}{\ensuremath{\mathbb{Z}}\xspace}
+\newcommand{\Ftwo}{\ensuremath{\mathbb{F}_{p^2}}\xspace}
+\newcommand{\Ftwlth}{\ensuremath{\mathbb{F}_{p^{12}}}\xspace}
+\newcommand{\Ffour}{\ensuremath{\mathbb{F}_{p^4}}\xspace}
+\newcommand{\Fsix}{\ensuremath{\mathbb{F}_{p^{6}}}\xspace}
+
+\newcommand{\coinset}{\ensuremath{{\cal C}}\xspace}
+\newcommand{\serialnumset}{\ensuremath{\mathrm{SN}}\xspace}
+\newcommand{\addrset}{\ensuremath{{\cal A}}\xspace}
+\newcommand{\txset}{\ensuremath{{\cal T}}\xspace}
+\newcommand{\valueset}{\ensuremath{{\cal V}}\xspace}
+\newcommand{\ledgers}{\ensuremath{{\cal L}}\xspace}
+\newcommand{\gd}{\ensuremath{\mathsf{g}}\xspace}
+
+\newcommand{\snof}[1]{\ensuremath{\mathrm{sn}(#1)}\xspace}
+\newcommand{\nfof}[1]{\ensuremath{\mathsf{nf}(#1)}\xspace}
+\newcommand{\rkof}[1]{\ensuremath{\mathsf{rk}(#1)}\xspace}
+\newcommand{\valueof}[1]{\ensuremath{\mathrm{v}(#1)}\xspace}
+\newcommand{\addrof}[1]{\ensuremath{\mathrm{addr}(#1)}\xspace}
+\newcommand{\equals}[4]{\ensuremath{\mathsf{equals}(#1,#2,#3,#4)}\xspace}
+\newcommand{\coins}{\ensuremath{\mathrm{\mathbf{c}}}\xspace}
+\newcommand{\vold}{\ensuremath{\mathrm{v_{pub}^{old}}}\xspace}
+\newcommand{\vbal}{\ensuremath{\mathrm{v^{bal}}}\xspace}
+\newcommand{\bal}{\ensuremath{\mathrm{bal}}\xspace}
+\newcommand{\rand}{\ensuremath{\mathrm{\mathbf{rcv}}}\xspace}
+\newcommand{\vnew}{\ensuremath{\mathrm{v_{pub}^{new}}}\xspace}
+\newcommand{\ledger}{\ensuremath{\mathrm{L}}\xspace}
+\newcommand{\values}{\ensuremath{\mathrm{\mathbf{v}}}\xspace}
+\newcommand{\valuesof}[1]{\ensuremath{\values(#1)}\xspace}
+\newcommand{\addrs}{\ensuremath{\mathrm{\mathbf{a}}}\xspace}
+\newcommand{\addrsof}[1]{\ensuremath{\addrs(#1)}\xspace}
+
+\newcommand{\sqoftexset}{{\cal S}\xspace}
+\newcommand{\verifytx}[2]{\ensuremath{\mathsf{verify\mhyphen tx} (#1,#2)}\xspace}
+\newcommand{\serialnumbersof}[1]{\ensuremath{\mathrm{sn}(#1)}\xspace}
+\newcommand{\coinsof}[1]{\ensuremath{\coins(#1)}\xspace}
+\newcommand{\seqofcoins}{\ensuremath{\coins^*}\xspace}
+\newcommand{\txinput}{\ensuremath{\mathrm{x}}\xspace}
+\newcommand{\txinputs}{\ensuremath{\mathrm{\mathbf{x}}}\xspace}
+\newcommand{\seqoftxset}{\ensuremath{\txset^*}\xspace}
+\newcommand{\tx}{\ensuremath{\mathsf{tx}}\xspace}
+\newcommand{\aprand}{\ensuremath{\mathrm{pp}}\xspace}
+\newcommand{\coin}{\ensuremath{\mathrm{c}}\xspace}
+\newcommand{\ledgerset}{\ensuremath{\mathcal{L}}\xspace}
+\newcommand{\uniqueledgerset}{\ensuremath{\mathcal{L}^{\mathrm{unique}}}\xspace}
+\newcommand{\serialnums}{\ensuremath{\mathrm{\mathbf{sn}}}\xspace}
+
+\newcommand{\txinputset}{\ensuremath{\mathcal{I}}\xspace}
+
+\newcommand{\createtx}[2]{\ensuremath{\mathsf{create\mhyphen tx}(#1,#2)}\xspace}
+\newcommand{\decodebykey}[3]{\ensuremath{\mathsf{decode}_{#3}(#1,#2)}\xspace}%#3 is sk
+\newcommand{\decode}[2]{\ensuremath{\mathsf{decode}(#1,#2)}\xspace}
+   
+\newcommand{\key}{\ensuremath{\mathrm{sk}}\xspace}
+\newcommand{\keyof}[1]{\ensuremath{\key(#1)}\xspace}
+\newcommand{\keyset}{\ensuremath{{\mathcal K}}\xspace}
+
+
+\newcommand{\adv}{\ensuremath{{\mathcal A}}\xspace}
+\newcommand{\advprime}{\ensuremath{{\mathcal A'}}\xspace}
+\newcommand{\advs}{\ensuremath{{\mathcal{A}}}\xspace}
+\newcommand{\advaddrs}{\ensuremath{\addrs_{\adv}}\xspace}
+\newcommand{\coinsofserialnums}[2]{\ensuremath{\coins(#1,#2)}\xspace}
+\newcommand{\seq}{\ensuremath{\mathsf{r}}\xspace}
+\newcommand{\querseq}{\ensuremath{\mathsf{q}}\xspace}
+\newcommand{\sigquerseq}{\ensuremath{\mathsf{q^\sigma}}\xspace}
+\newcommand{\schnorr}{\ensuremath{\mathsf{Schnorr}}\xspace}
+\newcommand{\rawof}[1]{\ensuremath{\mathsf{raw(#1)}}\xspace}
+\newcommand{\honest}{\ensuremath{\mathcal H}\xspace}
+\newcommand{\ext}{\ensuremath{\mathcal \xi}\xspace}
+\newcommand{\G}{\ensuremath{\mathbb{G}}\xspace}
+\newcommand{\sigseq}{\ensuremath{\mathsf{\sigma}}\xspace}
+\newcommand{\sk}{\ensuremath{\mathsf{sk}}\xspace}
+\newcommand{\pk}{\ensuremath{\mathsf{pk}}\xspace}
+\newcommand{\sigquer}{\ensuremath{\mathsf{q^\sigma}}\xspace}
+\newcommand{\RO}{\ensuremath{\mathcal R}\xspace}
+\newcommand{\sig}{\ensuremath{\sigma}\xspace}
+\newcommand{\sign}{\ensuremath{\mathsf{sign}}\xspace}
+\newcommand{\versig}{\ensuremath{\mathsf{verifySig}}\xspace}
+\renewcommand{\sim}{\ensuremath{ {\mathcal S}}\xspace}
+\newcommand{\simprv}{\ensuremath{\sim_{\mathsf{sign}}}\xspace}
+\newcommand{\simro}{\ensuremath{\sim_{\RO}}\xspace}
+\newcommand{\str}{\ensuremath{\mathrm{x}}\xspace}
+\newcommand{\negl}{\ensuremath{\mathrm{negl}(\lambda)}\xspace}
+\newcommand{\msg}{\ensuremath{\mathbf m}\xspace}
+\newcommand{\dist}{\ensuremath{\mathrm{\pi}}\xspace}
+\newcommand{\oracle}{\ensuremath{\mathscr O}\xspace}
+\newcommand{\oracleprime}{\ensuremath{\mathscr O'}\xspace}
+\newcommand{\g}{\ensuremath{\mathsf{g}}\xspace}
+\newcommand{\createaddr}{\ensuremath{\mathsf{createaddr}}\xspace}
+\newcommand{\makeinput}{\ensuremath{\mathsf{makeinput}}\xspace}
+\newcommand{\makeoutput}{\ensuremath{\mathsf{makeoutput}}\xspace}
+\newcommand{\makeoutputandnote}{\ensuremath{\mathsf{makeoutputandnote}}\xspace}
+\newcommand{\maketx}{\ensuremath{\mathsf{maketx}}\xspace}
+\newcommand{\makerandomizedtx}{\ensuremath{\mathsf{makerandomizedtx}}\xspace}
+\newcommand{\formtx}{\ensuremath{\mathsf{formtx}}\xspace}
+\newcommand{\signtx}[1]{\ensuremath{\mathsf{signtx}(#1)}\xspace}
+\newcommand{\notecom}{\ensuremath{\mathbf{NC}}\xspace}
+\newcommand{\addr}{\ensuremath{\mathbf{ADDR}}\xspace}
+\newcommand{\valcom}{\ensuremath{\mathbf{VC}}\xspace}
+\newcommand{\esk}{\ensuremath{\mathsf{esk}}\xspace}
+\newcommand{\note}{\ensuremath{\mathsf{note}}\xspace}
+\renewcommand{\notes}{\ensuremath{\overrightarrow{\mathsf{note}}}\xspace}
+\newcommand{\noteenc}{\ensuremath{\mathsf{enc}}\xspace}
+\newcommand{\epk}{\ensuremath{\mathsf{epk}}\xspace}
+% \newcommand{\pk}{\ensuremath{\mathsf{pk}}\xspace}
+\newcommand{\gr}{\ensuremath{\mathsf{g}_\mathbf{r}}\xspace}
+\newcommand{\gsig}{\ensuremath{\mathsf{g}_{\mathbf{sig}}}\xspace}
+\newcommand{\gnk}{\ensuremath{\mathsf{g}_{\mathbf{n}}}\xspace}
+\newcommand{\gv}{\ensuremath{\mathsf{g}_{\mathbf{v}}}\xspace}
+% \newcommand{\pk}{\ensuremath{\mathsf{pk}}\xspace}
+\newcommand{\rawtx}{\ensuremath{\mathsf{raw_{tx}}}\xspace}
+\newcommand{\pretx}{\ensuremath{\mathsf{pre\mhyphen tx}}\xspace}
+\newcommand{\sigval}{\ensuremath{\sigma_{\mathsf{val}}}\xspace}
+\newcommand{\rcvs}{\ensuremath{\overrightarrow{\mathsf{rcv}}}\xspace}
+\newcommand{\rcms}{\ensuremath{\overrightarrow{\mathsf{rcm}}}\xspace}
+\newcommand{\pak}{\ensuremath{\mathsf{pak}}\xspace}
+\newcommand{\apk}{\ensuremath{\mathsf{a_{pk}}}\xspace}
+\newcommand{\rcv}{\ensuremath{\mathsf{rcv}}\xspace}
+\newcommand{\rk}{\ensuremath{\mathsf{rk}}\xspace}
+\newcommand{\nk}{\ensuremath{\mathsf{nk}}\xspace}
+\newcommand{\ovk}{\ensuremath{\mathsf{ovk}}\xspace}
+\newcommand{\ivk}{\ensuremath{\mathsf{ivk}}\xspace}
+\newcommand{\IVK}{\ensuremath{\mathsf{IVK}}\xspace}
+\newcommand{\nsk}{\ensuremath{\mathsf{nsk}}\xspace}
+\newcommand{\ask}{\ensuremath{\mathsf{a_{sk}}}\xspace}
+\newcommand{\signallinputs}{\ensuremath{\mathsf{sign\mhyphen all\mhyphen inputs}}\xspace}
+\newcommand{\spendverify}{\ensuremath{\mathsf{spendverify}}\xspace}
+\newcommand{\pubinp}{\ensuremath{\mathrm{pub}}\xspace}
+\newcommand{\wit}{\ensuremath{\mathsf{w}}\xspace}
+\newcommand{\outstatement}[1]{\ensuremath{\mathsf{OUT}(#1)}\xspace}
+\newcommand{\spendstatement}[1]{\ensuremath{\mathsf{SPEND}(#1)}\xspace}
+\newcommand{\cm}{\ensuremath{\mathsf{cm}}\xspace}
+\newcommand{\nf}{\ensuremath{\mathsf{nf}}\xspace}
+\renewcommand{\path}{\ensuremath{\mathsf{path}}\xspace}
+\newcommand{\makejsd}{\ensuremath{\mathsf{makeJSD}}\xspace}
+\newcommand{\distjsd}{\ensuremath{\mathsf{distJSD}}\xspace}
+\newcommand{\cv}{\ensuremath{\mathsf{cv}}\xspace}
+\newcommand{\rt}{\ensuremath{\mathsf{rt}}\xspace}
+\newcommand{\prf}{\ensuremath{\pi}\xspace}
+\newcommand{\pkenc}{\ensuremath{\mathsf{pk_{enc}}}\xspace}
+\renewcommand{\input}{\ensuremath{\mathsf{input}}\xspace}
+\renewcommand{\output}{\ensuremath{\mathsf{output}}\xspace}
+\newcommand{\inputs}{\ensuremath{\overrightarrow{\mathsf{input}}}\xspace}
+\renewcommand{\notes}{\ensuremath{\overrightarrow{\mathsf{note}}}\xspace}
+\newcommand{\invals}{\ensuremath{\overrightarrow{\mathsf{v}}}\xspace}
+\newcommand{\outvals}{\ensuremath{\overrightarrow{\mathsf{ov}}}\xspace}
+\newcommand{\sigs}{\ensuremath{\overrightarrow{\mathsf{\sigma}}}\xspace}
+\newcommand{\alphas}{\ensuremath{\overrightarrow{\mathsf{\alpha}}}\xspace}
+\newcommand{\aks}{\ensuremath{\overrightarrow{\mathsf{ak}}}\xspace}
+\newcommand{\asks}{\ensuremath{\overrightarrow{\mathsf{ask}}}\xspace}
+\newcommand{\ivks}{\ensuremath{\overrightarrow{\mathsf{ivk}}}\xspace}
+\newcommand{\sks}{\ensuremath{\overrightarrow{\mathsf{sk}}}\xspace}
+\newcommand{\outputs}{\ensuremath{\overrightarrow{\mathsf{output}}}\xspace}
+\newcommand{\rcm}{\ensuremath{\mathsf{rcm}}\xspace}
+\newcommand{\val}{\ensuremath{\mathsf{v}}\xspace}
+\newcommand{\outval}{\ensuremath{\mathsf{ov}}\xspace}
+ \newcommand{\NF}{\ensuremath{\mathbf{NF}}\xspace}
+ \newcommand{\HSIG}{\ensuremath{\mathbf{HSIG}}\xspace}
+ \newcommand{\PK}{\ensuremath{\mathbf{PK}}\xspace}
+% \newcommand{\createaddr}{\ensuremath{\mathsf{createaddr}}\xspace}
+\newcommand{\provoutput}{\ensuremath{\pi_{\mathsf{output}}}\xspace}
+\newcommand{\provspend}{\ensuremath{\pi_{\mathsf{spend}}}\xspace}
+\newcommand{\symencrypt}[2]{\ensuremath{\mathbf{ENC}_{#1}(#2)}\xspace}
+\newcommand{\symdecrypt}[2]{\ensuremath{\mathbf{DEC}_{#1}(#2)}\xspace}
+\newcommand{\sighash}{\ensuremath{\mathbf{sighash}}\xspace}
+\newcommand{\enc}{\ensuremath{\mathbf{C^{\mathsf{enc}}}}\xspace}
+\newcommand{\outverify}{\ensuremath{\mathbf{outverify}}\xspace}
+\newcommand{\MAXVAL}{\ensuremath{\mathsf{MAX}}\xspace}
+\newcommand{\GH}{\ensuremath{\mathrm{GH}}\xspace}
+\newcommand{\RHO}{\ensuremath{\mathbf{RHO}}\xspace}
+\newcommand{\KDF}{\ensuremath{\mathbf{KDF}}\xspace}
+\newcommand{\snark}{\ensuremath{\mathscr S}\xspace}
+\newcommand{\outputnotes}{\ensuremath{\mathsf{outputNOTES}}\xspace}
+\newcommand{\dec}{\ensuremath{\mathsf{\mathbf{dec}}}\xspace}
+\newcommand{\np}{\ensuremath{\mathsf{np}}\xspace}
+\newcommand{\ghash}{\ensuremath{\mathsf{GH}}\xspace}
+\renewcommand{\d}{\ensuremath{\mathsf{d}}\xspace}
+\newcommand{\secret}{\ensuremath{\mathsf{shared\mhyphen secret}}\xspace}
+\newcommand{\two}{\ensuremath{\set{1,2}}\xspace}
+\newcommand{\old}[1]{\ensuremath{#1_i^{\mathsf{old}}}\xspace}
+\newcommand{\new}[1]{\ensuremath{#1_i^{\mathsf{new}}}\xspace}
+\newcommand{\gen}{\ensuremath{\mathsf{Gen}}\xspace}
+\newcommand{\prv}{\ensuremath{\mathsf{P}}\xspace}
+\newcommand{\com}{\ensuremath{\mathsf{com}}\xspace}
+\newcommand{\crs}{\ensuremath{\sigma}\xspace}
+\newcommand{\ver}{\ensuremath{\mathsf{ver}}\xspace}
+\newcommand{\randomseed}{\ensuremath{\mathsf{randomseed}}\xspace}
+\newcommand{\rel}{\ensuremath{\mathsf{R}}\xspace}
+\newcommand{\hsig}{\ensuremath{\mathsf{h_{sig}}}\xspace}
+
+
+\section{Introduction}
+
+The purpose of this note is to show that witness indistinguishability (WI), a weaker property than zero-knowledge, is a sufficient guarantee from a SNARK to achieve privacy in Zcash Joinsplits.
+The advantage of using WI, is that the WI property can be verified just by checking that 3 elements of the \cite{vnSNARK} proving key are non-zero;
+with no need to augment the SNARK parameters, as done e.g. in \cite{F17}; or download and verify the MPC transcript that created the parameters.
+
+\paragraph{In a nutshell, why is WI enough for Zcash?}
+The Zcash Sprout protocol is designed in a way that any shielded input and output notes can correspond to any SNARK public input, as long as they are consistent in the value moving from the transparent to shielded pool.
+Thus it is enough to hide the witness (i.e. input and output notes) that was used, and there is no need to hide the \emph{set} of possible witnesses.
+Contrast this with a Sudoku puzzle with only one solution (i.e. only one satisfying witness for the given public input), in which case a WI
+SNARK may leak information regarding this unique solution, where a zk-SNARK wouldn't
+
+\section{Definitions}
+
+
+The proof requires the random-oracle model, and practical security is based on the (standard) assumption that the SHA-256 and BLAKE-2 functions,
+used to instantiate the various independent oracles used in the protocol description below, ``behave like a random function''.
+
+We formally define the WI property;
+\begin{dfn}
+Suppose that $\snark = (\gen,\prv,\ver)$ is a SNARK for a relation \rel.
+\snark is \emph{Witness Indistinguishable} (WI) for an output \crs of the CRS-generator \gen, if for any public input \inp, there exists a distribtion \dist such that for any witness \wit such that $(\inp,\wit)\in \rel$ the distribtion of $\prv(\crs,\inp,\wit)$ is \dist.
+\end{dfn}
+It is easy to verify that 
+\begin{lemma}\label{lem:BCTV_is_WI}
+Let $\snark= (\gen,\prv,\ver)$ be the SNARK of \cite{vnSNARK} for a QAP relation.
+Then \snark is WI for any output \crs of \gen such that, in the notation of \cite{vnSNARK}, 
+ $A_{m+1},B_{m+2},C_{m+3}\neq 0$ in \crs.
+\end{lemma}
+\begin{proof}(sketch)
+When the mentioned elements of \crs are non-zero, then the $\pi_A,\pi_B,\pi_C$ elements of $\prv(\crs,\inp,\wit)$ are uniform,
+and the five other proof elements are deterministic functions of the first three and the public input.
+\end{proof}
+
+
+\section{The Zcash Sprout Joinsplit}
+We describe the joinsplits in notation that will be convenient for us. We assume familiarity with the Zcash spec \cite{spec}, which may also be refered to for more details.
+
+
+A \emph{sprout note \note} is a tupple $\note=(\apk,\val,\rho,\rcm)$ where \apk is the address, $\rho$ is the serial number, \val is the value of the note 
+and \rcm is the commitment randomness.
+
+
+
+We describe the Sprout \makejsd algorithm whose inputs consist of two input and two output notes, a root of a Merkle tree \rt containing the commitments of the two input notes as leaves, and a witness \wit containing Merkle paths from the commitments of $(\input_1,\input_2)$ to \rt, together with the secret keys 
+\old{\ask} of \set{\input}, and two bits indicating if the input notes are dummy notes of value 0, in which case the Merkle path need not be valid.
+
+We will use the functions \notecom, \NF, \PK, \RHO, \addr,\KDF from the spec (with different names), and assume here they are independent random oracles.
+
+We also make the simplfying assumption that we have a symmetric encryption scheme with the property that a fixed message under a uniformly chosen key is itself uniform.
+
+We describe in our notation the function \makejsd, that given input and output notes creates the Joinsplit Description of the transaction from
+these inputs to outputs.
+% 
+% To efficiently compute \makejsd we need an additional witness input for the SNARK proof.
+% Since the SNARK is WI, and we will only argue about the output distribution of \makejsd for fixed \inp and \wit,
+% we can afford to abuse notation a bit, and leave the SNARK witness as an implicit inpit to \makejsd
+
+We use below the notation $\inputs=(\input_1,\input_2)$
+where $\input_i = (\old{\apk},\old{\val},\old{\rho},\old{\rcm})$;
+and $\outputs = (\output_1,\output_2)$ where
+$\output_i = (\new{\apk},\new{\val})$.
+
+
+
+\underline{\makejsd(\rt,\vold,\vnew,\inputs,\outputs,\wit):}
+\begin{enumerate}
+\item For $i\in \two$, let 
+
+\begin{enumerate}
+ \item $\nf_i=\NF(\old{\rho}, \old{\ask})$
+ \item Choose random \new{\rcm} and define $\new{\note}\defeq (\new{\apk},\new{\val},\new{\rho},\new{\rcm})$.
+\item $\cm_i = \notecom(\new{\note})$
+ \end{enumerate}
+
+ \item Choose uniform \randomseed and $\varphi$. Compute \hsig as described in the spec using the joinsplit pubkey together with $\randomseed,\nf_1,\nf_2$.
+\item For $i\in \two$, let 
+\begin{enumerate}
+
+\item $h_i = \PK(\old{\ask},i,\hsig)$.
+\item $\new{\rho}=\RHO(\varphi,i,\hsig)$.
+\item Choose a random key pair $(\esk_i,\epk_i)$, and let $\enc_i$ be the encryption under $K_i\defeq \KDF(\new{\pkenc}\cdot \esk)$ of
+\new{\note}.
+\end{enumerate}
+\item Compute a SNARK proof \prf for public input $(\rt,\vold,\vnew,\nf_1,\nf_2,\cm_1,\cm_2,h_1,h_2,\hsig)$ using the witness $\left(\wit,\inputs,\sett{\new{\note}}{i\in\two}, \varphi\right )$.
+\item Output\footnote{It is convenient for us to write \hsig as an explicit part of the Joinsplit description; in practice it is derived online deterministically from other values in the transaction, and not actually written down in the JSD.} $(\vold,\vnew,\rt,\randomseed,\nf_1,\nf_2,\cm_1,\cm_2,h_1,h_2,\hsig,\prf,\epk_1,\epk_2,\enc_1,\enc_2)$.
+
+\end{enumerate}
+
+
+\section{The privacy of the Joinsplit description}
+
+
+Let us say that $(\inputs,\outputs,\wit)$ is \emph{consistent with $(\rt,\vold,\vnew)$}
+if the values add up, i.e.
+\[\vold+\sum_{i\in \two}\old{\val} = \vnew + \sum_{i\in \two} \new{\val},\]
+and for $i\in \two$ there is a Merkle path in \wit from $\notecom(\input_i)$ to \rt (or the dummy note bit is one, and the value of the note is zero).
+
+
+We say a pair of Sprout notes $\notes = (\note_1,\note_2)$ is \emph{an extension} of $\outputs$
+if $\note_i$ coincides with $\output_i$ on the values $\new{\apk},\new{\val}$.
+
+Fix consistent $(\vold,\vnew,\inputs,\outputs,\wit)$.
+Let $\notes$ be an extension of \outputs.
+
+We denote by 
+
+\[\distjsd(\rt,\vold,\vnew,\inputs,\outputs,\wit,\notes)\]
+the output distribution of
+$\makejsd(\rt,\vold,\vnew,\inputs,\outputs,\wit)$
+conditioned on $\new{\note}=\note_i$ for $i\in\two$.
+
+The following theorem implies that seeing a Joinsplit description (including the SNARK proof) in a transaction 
+tells us nothing about the inputs and outputs of the transaction, except that they are consistent with $(\rt,\vold,\vnew)$.
+
+\begin{thm}\label{thm:privacy}
+Fix values $\rt,\vold,\vnew$.
+Fix $(\inputs,\outputs,\wit)$ consistent with $(\rt,\vold,\vnew)$.
+Fix \notes that is an extension of \outputs.
+The the distribution $\distjsd(\vold,\vnew,\rt,\inputs,\outputs,\wit,\notes)$
+ depends only on $\vold,\vnew,\rt$ and the joinsplit pubkey in the transaction.
+\end{thm}
+\begin{proof}
+The output of \makejsd is of the form
+\[(\rt,\vold,\vnew,\randomseed,\nf_1,\nf_2,\cm_1,\cm_2,h_1,h_2,\hsig,\prf,\epk_1,\epk_2,\enc_1,\enc_2)\]
+
+We go over the elements sequentially and show that their distribution, even conditioned on any fixing of the previous elements in the sequence,
+depends only on $(\rt,\vold,\vnew)$ and the value of previous elements in the sequence, and thus, inductively, depend only on $(\rt,\vold,\vnew)$.
+\begin{itemize}
+ \item  The first three output values $\rt,\vold,\vnew$ clearly only depend on themselves :)
+\item  \randomseed is uniform and independent of $(\rt,\vold,\vnew)$.
+\item  The values $\nf_1,\nf_2,\cm_1,\cm_2,h_1,h_2$ are random oracle outputs on distinct outputs, and thus uniform and independent of previous elements
+and each other.
+\item \hsig is a function of previous elements together with the Joinsplit pubkey.
+\item Since \snark is WI, the distribution of \prf depends only on the public input 
+\[\rt,\vold,\vnew,\randomseed,\nf_1,\nf_2,\cm_1,\cm_2,h_1,h_2,\hsig\]
+\item $\epk_i$ is a deterministic function of the randomly and independently chosen $\esk_i$
+ \item $\enc_1$ and $\enc_2$ are encryptions under the uniformly chosen, and independent of all previous elements so far, keys $K_i$ and thus (using our simplyfing assumption on uniformity of the encryption scheme when the key is uniform), are simply uniform.
+\end{itemize}
+
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+\bibliography{References}
+\bibliographystyle{plain}
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
